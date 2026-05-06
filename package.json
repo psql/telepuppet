@@ -1,0 +1,11 @@
+{
+  "name": "telepuppet",
+  "version": "1.0.0",
+  "description": "Animatronics joint control simulator",
+  "scripts": {
+    "start": "serve . --listen $PORT"
+  },
+  "dependencies": {
+    "serve": "^14.2.4"
+  }
+}
