@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Telepuppet — Joint Simulator</title>
+<title>Telepuppet</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
@@ -13,14 +13,56 @@ body {
   display: flex; flex-direction: column; user-select: none;
 }
 
-/* ── Header ──────────────────────────────────────────────── */
+/* ── App header ──────────────────────────────────────────── */
+#app-header {
+  padding: 10px 22px;
+  background: #080812;
+  border-bottom: 1px solid #1a1a38;
+  display: flex; align-items: center; gap: 0;
+  flex-shrink: 0;
+}
+#app-header h1 {
+  font-size: 18px; font-weight: normal;
+  color: #aaccff; letter-spacing: 6px; text-transform: uppercase;
+  margin-right: 28px;
+}
+
+/* ── Section nav ─────────────────────────────────────────── */
+#section-nav {
+  display: flex; align-items: stretch; gap: 2px; flex: 1;
+}
+.nav-tab {
+  font-family: 'Courier New', monospace;
+  font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
+  padding: 6px 18px; cursor: pointer;
+  border: 1px solid transparent; border-radius: 4px 4px 0 0;
+  color: #44447a; background: transparent;
+  transition: color .15s, border-color .15s, background .15s;
+  position: relative; top: 1px;
+}
+.nav-tab:hover  { color: #8899bb; border-color: #2a2a50; }
+.nav-tab.active {
+  color: #aaccff; background: #0e0e1e;
+  border-color: #2a2a50; border-bottom-color: #0e0e1e;
+}
+.nav-tab.soon {
+  color: #2a2a48; cursor: default;
+  font-size: 11px;
+}
+.nav-tab.soon::after {
+  content: ' ·'; color: #22223a;
+}
+
+/* ── Header toolbar (right side) ────────────────────────── */
 #header {
-  padding: 10px 20px; background: #0e0e1e;
+  padding: 8px 22px; background: #0e0e1e;
   border-bottom: 2px solid #2a2a50;
   display: flex; align-items: center; gap: 16px; flex-shrink: 0;
 }
-#header h1 { font-size: 17px; font-weight: normal; color: #88bbff; letter-spacing: 5px; text-transform: uppercase; }
-#header .sub { font-size: 12px; color: #6666aa; }
+#header .view-label {
+  font-size: 14px; font-weight: bold; color: #7799ee;
+  letter-spacing: 3px; text-transform: uppercase;
+}
 .right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
 #fps { font-size: 11px; color: #44447a; }
 .hbtn {
@@ -189,9 +231,18 @@ canvas.graph { flex: 1; display: block; width: 100%; border: 1px solid #141432; 
 </head>
 <body>
 
-<div id="header">
+<div id="app-header">
   <h1>Telepuppet</h1>
-  <span class="sub">Oscillator · Limits · Wiggly Chain</span>
+  <nav id="section-nav">
+    <div class="nav-tab active">Playground</div>
+    <div class="nav-tab soon">Hardware</div>
+    <div class="nav-tab soon">Characters</div>
+    <div class="nav-tab soon">Sessions</div>
+  </nav>
+</div>
+
+<div id="header">
+  <span class="view-label">Playground</span>
   <div class="right">
     <span id="fps">-- fps</span>
     <button class="hbtn view3d" id="btn-3d">⟳ 3D View</button>
