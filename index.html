@@ -6,43 +6,35 @@
 <title>Telepuppet — Joint Simulator</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
-
 body {
-  background: #0a0a14;
-  color: #e8e8ff;
+  background: #0a0a14; color: #e8e8ff;
   font-family: 'Courier New', monospace;
-  height: 100vh;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  user-select: none;
+  height: 100vh; overflow: hidden;
+  display: flex; flex-direction: column; user-select: none;
 }
 
 /* ── Header ──────────────────────────────────────────────── */
 #header {
-  padding: 11px 22px;
-  background: #0e0e1e;
+  padding: 10px 20px; background: #0e0e1e;
   border-bottom: 2px solid #2a2a50;
-  display: flex; align-items: center; gap: 20px;
-  flex-shrink: 0;
+  display: flex; align-items: center; gap: 16px; flex-shrink: 0;
 }
-#header h1 {
-  font-size: 17px; font-weight: normal;
-  color: #88bbff; letter-spacing: 5px; text-transform: uppercase;
-}
+#header h1 { font-size: 17px; font-weight: normal; color: #88bbff; letter-spacing: 5px; text-transform: uppercase; }
 #header .sub { font-size: 12px; color: #6666aa; }
-.right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
 #fps { font-size: 11px; color: #44447a; }
-
 .hbtn {
   font-size: 12px; font-family: 'Courier New', monospace;
-  padding: 5px 14px; background: #14143a;
+  padding: 5px 13px; background: #14143a;
   border: 1px solid #33337a; color: #8899cc;
   border-radius: 4px; cursor: pointer;
   transition: background .15s, border-color .15s, color .15s;
 }
 .hbtn:hover  { background: #1c1c4a; border-color: #5566cc; color: #bbccff; }
 .hbtn.active { background: #1a2455; border-color: #5588ff; color: #aaccff; }
+.hbtn.view3d { border-color: #44aa66; color: #66ee99; }
+.hbtn.view3d:hover { background: #0f2a1a; border-color: #66cc88; }
+.hbtn.view3d.active { background: #0f2a1a; border-color: #44ff88; color: #88ffbb; }
 
 /* ── Layout ──────────────────────────────────────────────── */
 #main { display: flex; flex: 1; overflow: hidden; }
@@ -50,16 +42,14 @@ body {
 /* ── Scene ───────────────────────────────────────────────── */
 #scene {
   position: relative; width: 400px; flex-shrink: 0;
-  background: #050509; border-right: 2px solid #1e1e3a;
-  overflow: hidden;
+  background: #050509; border-right: 2px solid #1e1e3a; overflow: hidden;
 }
-#scene canvas { display: block; width: 100% !important; height: 100% !important; }
-
+#scene canvas { display: block; width: 100% !important; height: 100% !important; cursor: grab; }
+#scene canvas:active { cursor: grabbing; }
 #hud { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
 .hudl {
   position: absolute; font-size: 12px; letter-spacing: 1px; text-transform: uppercase;
-  padding: 4px 10px; border-radius: 3px; background: rgba(5,5,12,0.85);
-  font-weight: bold;
+  padding: 4px 10px; border-radius: 3px; background: rgba(5,5,12,0.85); font-weight: bold;
 }
 #hl-phys { top: 12px; left: 50%; transform: translateX(-50%); color: #cc5544; border: 1px solid #882200; }
 #hl-elec { top: 38px; left: 50%; transform: translateX(-50%); color: #dd8844; border: 1px solid #993300; }
@@ -67,49 +57,39 @@ body {
   bottom: 14px; left: 50%; transform: translateX(-50%);
   color: #88bbff; border: 1px solid #2244aa; font-size: 16px; letter-spacing: 3px;
 }
+#hl-view {
+  top: 12px; right: 12px;
+  font-size: 10px; color: #44aa66; border: 1px solid #226644;
+  padding: 3px 8px;
+}
+.hint3d {
+  position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+  font-size: 10px; color: #336633; border: 1px solid #224422;
+  padding: 3px 10px; border-radius: 3px; background: rgba(5,5,12,0.85);
+  pointer-events: none;
+}
 
-/* ── Right ───────────────────────────────────────────────── */
+/* ── Right panel ─────────────────────────────────────────── */
 #right { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
 
 /* ── Section header ──────────────────────────────────────── */
 .sec-hdr {
   font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
   color: #8888cc; background: #0e0e22; padding: 7px 18px;
-  border-bottom: 2px solid #22224a;
-  flex-shrink: 0;
+  border-bottom: 2px solid #22224a; flex-shrink: 0;
 }
 
-/* ── Oscillator section ──────────────────────────────────── */
-#osc-section {
-  padding: 14px 18px;
-  background: #0b0b1e;
-  border-bottom: 2px solid #1e1e40;
-  display: flex; gap: 16px;
-  flex-shrink: 0;
-}
-
-.osc-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  flex: 1;
-}
-
-/* ── Shared control box ──────────────────────────────────── */
+/* ── Boxes (shared) ──────────────────────────────────────── */
 .box {
   background: #0f0f28; border: 1px solid #2a2a55;
-  border-radius: 5px; padding: 12px 14px;
-  transition: border-color .15s;
+  border-radius: 5px; padding: 11px 13px; transition: border-color .15s;
 }
 .box:hover { border-color: #4444aa; }
-
-.box-top {
-  display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 9px;
-}
+.box-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
 .box-name { font-size: 12px; color: #9999cc; letter-spacing: 1px; text-transform: uppercase; }
 .box-val  { font-size: 20px; font-weight: bold; }
+.box-desc { font-size: 11px; color: #55558a; margin-top: 6px; }
 
-/* Value colors */
 .vc-freq  { color: #77aaff; }
 .vc-amp   { color: #55ddff; }
 .vc-drive { color: #ffbb44; }
@@ -117,125 +97,104 @@ body {
 .vc-phys  { color: #ff6655; }
 .vc-range { color: #7788ff; }
 .vc-off   { color: #bb88ff; }
+.vc-om    { color: #ffdd55; }
+.vc-dmp   { color: #ff9966; }
 
-.box-desc { font-size: 11px; color: #55558a; margin-top: 7px; }
-
-/* Sliders */
 .box input[type=range] {
   width: 100%; height: 6px; cursor: pointer; border-radius: 3px;
-  appearance: none; outline: none;
+  appearance: none; outline: none; background: #1a1a48;
 }
 .box input[type=range]::-webkit-slider-thumb {
   appearance: none; width: 18px; height: 18px; border-radius: 50%;
-  cursor: pointer; border: 2px solid rgba(255,255,255,0.2);
-  transition: transform .1s;
+  cursor: pointer; border: 2px solid rgba(255,255,255,0.15); transition: transform .1s;
 }
 .box input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.15); }
-
-#o1f { background: linear-gradient(#1a1a48, #1a1a48); }
-#o1a { background: linear-gradient(#1a1a48, #1a1a48); }
-#odr { background: linear-gradient(#1a1a48, #1a1a48); }
-#onz { background: linear-gradient(#1a1a48, #1a1a48); }
-
 #o1f::-webkit-slider-thumb  { background: #77aaff; }
 #o1a::-webkit-slider-thumb  { background: #55ddff; }
 #odr::-webkit-slider-thumb  { background: #ffbb44; }
 #onz::-webkit-slider-thumb  { background: #44ddbb; }
+#s-om::-webkit-slider-thumb { background: #ffdd55; }
+#s-dmp::-webkit-slider-thumb{ background: #ff9966; }
 
-/* ── Waveform preview ────────────────────────────────────── */
-#wave-wrap {
-  width: 200px; flex-shrink: 0;
-  display: flex; flex-direction: column; gap: 8px;
-}
-.wave-title {
-  font-size: 11px; color: #6666aa; letter-spacing: 2px; text-transform: uppercase;
-}
+/* ── Oscillator section ──────────────────────────────────── */
+#osc-section { padding: 12px 16px; background: #0b0b1e; border-bottom: 2px solid #1e1e40; display: flex; gap: 14px; flex-shrink: 0; }
+.osc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; flex: 1; }
+
+/* Waveform */
+#wave-wrap { width: 185px; flex-shrink: 0; display: flex; flex-direction: column; gap: 6px; }
+.wave-title { font-size: 11px; color: #6666aa; letter-spacing: 2px; text-transform: uppercase; }
 #osc-wave { flex: 1; border-radius: 4px; border: 1px solid #22224a; display: block; min-height: 0; }
-.wave-foot {
-  font-size: 12px; color: #6666aa; display: flex; justify-content: space-between;
-}
+.wave-foot { font-size: 12px; color: #6666aa; display: flex; justify-content: space-between; }
 .wave-foot span { color: #ffbb44; font-weight: bold; }
 
 /* ── Joint controls ──────────────────────────────────────── */
-#ctrl-section {
-  padding: 14px 18px; background: #09091c;
-  border-bottom: 2px solid #1a1a3a; flex-shrink: 0;
-}
-.ctrl-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+#ctrl-section { padding: 12px 16px; background: #09091c; border-bottom: 2px solid #1a1a3a; flex-shrink: 0; }
+.ctrl-grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 9px; }
 
-.ctrl-box {
-  background: #0e0e26; border: 1px solid #282858;
-  border-radius: 5px; padding: 12px 14px;
-  transition: border-color .15s;
-}
+.ctrl-box { background: #0e0e26; border: 1px solid #282858; border-radius: 5px; padding: 11px 13px; transition: border-color .15s; }
 .ctrl-box:hover { border-color: #4040aa; }
-
-.ctrl-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 9px; }
-
-.badge {
-  font-size: 11px; padding: 2px 8px; border-radius: 3px;
-  margin-right: 7px; font-weight: bold;
-}
+.ctrl-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+.badge { font-size: 11px; padding: 2px 7px; border-radius: 3px; margin-right: 6px; font-weight: bold; }
 .b-phys  { background: #2a0f0f; color: #ff8877; border: 1px solid #882200; }
 .b-range { background: #0f0f2a; color: #8899ff; border: 1px solid #3344cc; }
 .b-off   { background: #1a0f2a; color: #cc99ff; border: 1px solid #7733cc; }
-
 .ctrl-name { font-size: 12px; color: #9999cc; letter-spacing: 1px; }
 .ctrl-val  { font-size: 20px; font-weight: bold; }
-.ctrl-desc { font-size: 11px; color: #44447a; margin-top: 7px; }
-
-.ctrl-box input[type=range] {
-  width: 100%; height: 6px; cursor: pointer; border-radius: 3px;
-  appearance: none; background: #1a1a44; outline: none; margin-bottom: 2px;
-}
-.ctrl-box input[type=range]::-webkit-slider-thumb {
-  appearance: none; width: 18px; height: 18px; border-radius: 50%;
-  cursor: pointer; border: 2px solid rgba(255,255,255,0.2);
-  transition: transform .1s;
-}
+.ctrl-desc { font-size: 11px; color: #44447a; margin-top: 6px; }
+.ctrl-box input[type=range] { width: 100%; height: 6px; cursor: pointer; border-radius: 3px; appearance: none; background: #1a1a44; outline: none; margin-bottom: 2px; }
+.ctrl-box input[type=range]::-webkit-slider-thumb { appearance: none; width: 18px; height: 18px; border-radius: 50%; cursor: pointer; border: 2px solid rgba(255,255,255,0.15); transition: transform .1s; }
 .ctrl-box input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.15); }
-
 #ctrl-phys::-webkit-slider-thumb  { background: #ff6655; }
 #ctrl-range::-webkit-slider-thumb { background: #7788ff; }
 #ctrl-off::-webkit-slider-thumb   { background: #bb88ff; }
 
+/* ── Chain section ───────────────────────────────────────── */
+#chain-section { padding: 12px 16px; background: #0a0a1c; border-bottom: 2px solid #181838; flex-shrink: 0; display: flex; gap: 10px; align-items: stretch; }
+.chain-sliders { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; flex: 1; }
+.chain-btns {
+  display: flex; flex-direction: column; gap: 6px; justify-content: center;
+  width: 120px; flex-shrink: 0;
+}
+.chain-btn {
+  font-family: 'Courier New', monospace; font-size: 12px;
+  padding: 8px 0; border-radius: 4px; cursor: pointer; text-align: center;
+  border: 1px solid; transition: all .15s; font-weight: bold; letter-spacing: 1px;
+}
+.chain-btn.add { background: #0a2a14; border-color: #226633; color: #55ee88; }
+.chain-btn.add:hover { background: #0f3a1c; border-color: #44aa66; color: #88ffaa; }
+.chain-btn.rem { background: #1a0a0a; border-color: #552222; color: #dd5533; }
+.chain-btn.rem:hover { background: #2a0f0f; border-color: #884433; color: #ff7755; }
+.chain-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.joint-dots { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; }
+.joint-dot { width: 10px; height: 10px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2); }
+
 /* ── Readouts ─────────────────────────────────────────────── */
-#readouts {
-  padding: 10px 18px; background: #08081a;
-  border-bottom: 2px solid #181838;
-  display: flex; gap: 8px; flex-shrink: 0;
-}
-.rd {
-  flex: 1; background: #0e0e26; border: 1px solid #242452;
-  border-radius: 5px; padding: 9px 10px; text-align: center; min-width: 0;
-}
-.rd-l { font-size: 11px; color: #6666aa; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
-.rd-v { font-size: 18px; font-weight: bold; white-space: nowrap; }
-.rp   { color: #77aaff; }
-.rv   { color: #ffaa55; }
-.rl   { color: #ff6655; }
-.rr   { color: #ff6655; }
-.rd-d { color: #ffcc44; }
+#readouts { padding: 9px 16px; background: #08081a; border-bottom: 2px solid #181838; display: flex; gap: 7px; flex-shrink: 0; }
+.rd { flex: 1; background: #0e0e26; border: 1px solid #242452; border-radius: 5px; padding: 8px 9px; text-align: center; min-width: 0; }
+.rd-l { font-size: 11px; color: #6666aa; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+.rd-v { font-size: 17px; font-weight: bold; white-space: nowrap; }
+.rp { color: #77aaff; } .rv { color: #ffaa55; } .rl { color: #ff6655; } .rr { color: #ff6655; } .rd-d { color: #ffcc44; }
 
 /* ── Graphs ───────────────────────────────────────────────── */
 #graphs { flex: 1; display: flex; overflow: hidden; min-height: 0; background: #06060f; }
-.gwrap { display: flex; flex-direction: column; padding: 10px 14px; overflow: hidden; min-width: 0; }
-#gt    { flex: 2; border-right: 2px solid #141430; }
-#gp    { flex: 1; min-width: 150px; }
-.gtitle { font-size: 11px; color: #6666aa; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 6px; flex-shrink: 0; }
+.gwrap { display: flex; flex-direction: column; padding: 10px 12px; overflow: hidden; min-width: 0; }
+#gt { flex: 2; border-right: 2px solid #141430; }
+#gp { flex: 1; min-width: 150px; }
+.gtitle { font-size: 11px; color: #6666aa; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; flex-shrink: 0; }
 canvas.graph { flex: 1; display: block; width: 100%; border: 1px solid #141432; border-radius: 3px; min-height: 0; }
-.gleg { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; flex-shrink: 0; }
+.gleg { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 5px; flex-shrink: 0; }
 .leg  { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #55558a; }
-.ll   { width: 18px; height: 2px; border-radius: 1px; }
+.ll   { width: 16px; height: 2px; border-radius: 1px; }
 </style>
 </head>
 <body>
 
 <div id="header">
   <h1>Telepuppet</h1>
-  <span class="sub">Oscillator · Physical Limit · Range · Offset &nbsp;— layer 1 of N</span>
+  <span class="sub">Oscillator · Limits · Wiggly Chain</span>
   <div class="right">
     <span id="fps">-- fps</span>
+    <button class="hbtn view3d" id="btn-3d">⟳ 3D View</button>
     <button class="hbtn active" id="btn-noise">Noise: ON</button>
     <button class="hbtn" id="btn-pause">Pause</button>
     <button class="hbtn" id="btn-reset">Reset</button>
@@ -243,63 +202,42 @@ canvas.graph { flex: 1; display: block; width: 100%; border: 1px solid #141432; 
 </div>
 
 <div id="main">
-
-  <!-- 3D scene -->
   <div id="scene">
     <canvas id="c3d"></canvas>
     <div id="hud">
       <div class="hudl" id="hl-phys">Physical limit</div>
       <div class="hudl" id="hl-elec">Electronic limit</div>
+      <div class="hudl" id="hl-view">TOP VIEW</div>
       <div class="hudl" id="hl-now">0.00°</div>
     </div>
   </div>
 
   <div id="right">
 
-    <!-- OSCILLATOR -->
     <div class="sec-hdr">Oscillator Drive</div>
     <div id="osc-section">
       <div class="osc-grid">
-
         <div class="box">
-          <div class="box-top">
-            <span class="box-name">Frequency</span>
-            <span class="box-val vc-freq" id="v-o1f">0.28 Hz</span>
-          </div>
+          <div class="box-top"><span class="box-name">Frequency</span><span class="box-val vc-freq" id="v-o1f">0.28 Hz</span></div>
           <input type="range" id="o1f" min="0.02" max="3.0" step="0.01" value="0.28">
           <div class="box-desc">Cycles per second</div>
         </div>
-
         <div class="box">
-          <div class="box-top">
-            <span class="box-name">Amplitude</span>
-            <span class="box-val vc-amp" id="v-o1a">5.0°</span>
-          </div>
+          <div class="box-top"><span class="box-name">Amplitude</span><span class="box-val vc-amp" id="v-o1a">5.0°</span></div>
           <input type="range" id="o1a" min="0" max="20" step="0.1" value="5.0">
           <div class="box-desc">Peak drive force</div>
         </div>
-
         <div class="box">
-          <div class="box-top">
-            <span class="box-name">Drive Scale</span>
-            <span class="box-val vc-drive" id="v-odr">50%</span>
-          </div>
+          <div class="box-top"><span class="box-name">Drive Scale</span><span class="box-val vc-drive" id="v-odr">50%</span></div>
           <input type="range" id="odr" min="0" max="100" step="1" value="50">
           <div class="box-desc">Overall strength multiplier</div>
         </div>
-
         <div class="box">
-          <div class="box-top">
-            <span class="box-name">Noise</span>
-            <span class="box-val vc-noise" id="v-nz">30%</span>
-          </div>
+          <div class="box-top"><span class="box-name">Noise</span><span class="box-val vc-noise" id="v-nz">30%</span></div>
           <input type="range" id="onz" min="0" max="100" step="1" value="30">
           <div class="box-desc">Random perturbation</div>
         </div>
-
       </div>
-
-      <!-- Waveform -->
       <div id="wave-wrap">
         <div class="wave-title">Drive Signal</div>
         <canvas id="osc-wave"></canvas>
@@ -307,72 +245,69 @@ canvas.graph { flex: 1; display: block; width: 100%; border: 1px solid #141432; 
       </div>
     </div>
 
-    <!-- JOINT CONTROLS -->
     <div class="sec-hdr">Joint Controls</div>
     <div id="ctrl-section">
-      <div class="ctrl-grid">
-
+      <div class="ctrl-grid3">
         <div class="ctrl-box">
-          <div class="ctrl-top">
-            <div><span class="badge b-phys">PHYS</span><span class="ctrl-name">Hard Limit</span></div>
-            <span class="ctrl-val vc-phys" id="val-phys">±10.0°</span>
-          </div>
+          <div class="ctrl-top"><div><span class="badge b-phys">PHYS</span><span class="ctrl-name">Hard Limit</span></div><span class="ctrl-val vc-phys" id="val-phys">±10.0°</span></div>
           <input type="range" id="ctrl-phys" min="2" max="30" step="0.5" value="10">
           <div class="ctrl-desc">Physical end-stop · max travel</div>
         </div>
-
         <div class="ctrl-box">
-          <div class="ctrl-top">
-            <div><span class="badge b-range">C1</span><span class="ctrl-name">Range</span></div>
-            <span class="ctrl-val vc-range" id="val-range">±10.0°</span>
-          </div>
+          <div class="ctrl-top"><div><span class="badge b-range">C1</span><span class="ctrl-name">Range</span></div><span class="ctrl-val vc-range" id="val-range">±10.0°</span></div>
           <input type="range" id="ctrl-range" min="0" max="30" step="0.1" value="10">
           <div class="ctrl-desc">Electronic limit · symmetric braking</div>
         </div>
-
         <div class="ctrl-box">
-          <div class="ctrl-top">
-            <div><span class="badge b-off">C2</span><span class="ctrl-name">Offset</span></div>
-            <span class="ctrl-val vc-off" id="val-off">+0.0°</span>
-          </div>
+          <div class="ctrl-top"><div><span class="badge b-off">C2</span><span class="ctrl-name">Offset</span></div><span class="ctrl-val vc-off" id="val-off">+0.0°</span></div>
           <input type="range" id="ctrl-off" min="-20" max="20" step="0.1" value="0">
           <div class="ctrl-desc">Differential shift · biases center</div>
         </div>
-
       </div>
     </div>
 
-    <!-- READOUTS -->
+    <div class="sec-hdr">Wiggly Chain &nbsp;<span style="font-size:10px;color:#44447a;letter-spacing:1px">— Kass &amp; Anderson 2008</span></div>
+    <div id="chain-section">
+      <div class="chain-sliders">
+        <div class="box">
+          <div class="box-top"><span class="box-name">Wiggle ω</span><span class="box-val vc-om" id="v-om">2.0</span></div>
+          <input type="range" id="s-om" min="0.2" max="10" step="0.1" value="2.0">
+          <div class="box-desc">Natural frequency of following</div>
+        </div>
+        <div class="box">
+          <div class="box-top"><span class="box-name">Damping ζ</span><span class="box-val vc-dmp" id="v-dmp">0.35</span></div>
+          <input type="range" id="s-dmp" min="0.05" max="1.5" step="0.01" value="0.35">
+          <div class="box-desc">Energy loss · 1.0 = critical</div>
+        </div>
+      </div>
+      <div class="chain-btns">
+        <div class="joint-dots" id="joint-dots"></div>
+        <button class="chain-btn add" id="btn-add">+ Add Joint</button>
+        <button class="chain-btn rem" id="btn-rem" disabled>− Remove</button>
+      </div>
+    </div>
+
     <div id="readouts">
-      <div class="rd"><div class="rd-l">Position</div><div class="rd-v rp" id="rd-pos">+0.00°</div></div>
+      <div class="rd"><div class="rd-l">J0 Position</div><div class="rd-v rp" id="rd-pos">+0.00°</div></div>
       <div class="rd"><div class="rd-l">Velocity</div><div class="rd-v rv" id="rd-vel">+0.00°/s</div></div>
-      <div class="rd"><div class="rd-l">Left Limit</div><div class="rd-v rl" id="rd-left">-10.00°</div></div>
-      <div class="rd"><div class="rd-l">Right Limit</div><div class="rd-v rr" id="rd-right">+10.00°</div></div>
+      <div class="rd"><div class="rd-l">Left Lim</div><div class="rd-v rl" id="rd-left">-10.00°</div></div>
+      <div class="rd"><div class="rd-l">Right Lim</div><div class="rd-v rr" id="rd-right">+10.00°</div></div>
       <div class="rd"><div class="rd-l">Drive</div><div class="rd-v rd-d" id="rd-drv">+0.00</div></div>
     </div>
 
-    <!-- GRAPHS -->
     <div id="graphs">
-
       <div class="gwrap" id="gt">
-        <div class="gtitle">Position &amp; Drive · last 12 s</div>
+        <div class="gtitle">All Joints · Position / Time &nbsp;(last 12 s)</div>
         <canvas id="graph-time" class="graph"></canvas>
-        <div class="gleg">
-          <div class="leg"><div class="ll" style="background:#77aaff;height:2.5px"></div>Position</div>
-          <div class="leg"><div class="ll" style="background:#ffbb44;height:1.5px;opacity:.8"></div>Drive /4</div>
-          <div class="leg"><div class="ll" style="background:#ff7755"></div>Elec limits</div>
-          <div class="leg"><div class="ll" style="background:#882211;border-top:1px dashed #cc3322;height:0"></div>Phys limit</div>
-        </div>
+        <div class="gleg" id="gleg-time"></div>
       </div>
-
       <div class="gwrap" id="gp">
-        <div class="gtitle">Phase Space</div>
+        <div class="gtitle">Phase Space · J0</div>
         <canvas id="graph-phase" class="graph"></canvas>
         <div class="gleg">
-          <div class="leg"><div class="ll" style="background:#aa77ff;height:1.5px"></div>Pos vs Vel</div>
+          <div class="leg"><div class="ll" style="background:#77aaff;height:1.5px"></div>Pos vs Vel</div>
         </div>
       </div>
-
     </div>
 
   </div>
@@ -383,6 +318,18 @@ canvas.graph { flex: 1; display: block; width: 100%; border: 1px solid #141432; 
 'use strict';
 
 // ═══════════════════════════════════════════════════════════
+// JOINT COLORS
+// ═══════════════════════════════════════════════════════════
+const JOINT_COLORS = [
+  { hex: '#5599ff', three: 0x2244cc },  // J0: blue
+  { hex: '#44ddaa', three: 0x22aa77 },  // J1: teal
+  { hex: '#dd77ff', three: 0xaa33cc },  // J2: purple
+  { hex: '#ffaa44', three: 0xcc7722 },  // J3: orange
+  { hex: '#ff5577', three: 0xcc2244 },  // J4: red
+];
+const MAX_JOINTS = 5;
+
+// ═══════════════════════════════════════════════════════════
 // OSCILLATOR
 // ═══════════════════════════════════════════════════════════
 let oscFreq   = 0.28;
@@ -390,105 +337,185 @@ let oscAmp    = 5.0;
 let driveScale = 0.50;
 let oscNoise  = 0.30;
 let addNoise  = true;
+let oscPh = 0, noiseV = 0, rawDrive = 0;
 
-let oscPh  = 0;
-let noiseV = 0;
-let rawDrive = 0;
-
-function stepOscillator(dt) {
+function stepOsc(dt) {
   oscPh += 2 * Math.PI * oscFreq * dt;
-  if (addNoise) {
-    noiseV += (Math.random() - 0.5) * 1.2;
-    noiseV *= 0.90;
-  } else {
-    noiseV *= 0.95;
-  }
+  if (addNoise) { noiseV += (Math.random() - 0.5) * 1.2; noiseV *= 0.90; }
+  else noiseV *= 0.95;
   rawDrive = Math.sin(oscPh) * oscAmp + noiseV * oscNoise * 5;
 }
 
 // ═══════════════════════════════════════════════════════════
-// PHYSICS
+// PHYSICS — Joint 0 (base, oscillator-driven)
 // ═══════════════════════════════════════════════════════════
-let physMax    = 10;    // configurable hard limit
-let ctrlRange  = 10;    // electronic range (C1)
-let ctrlOffset = 0;     // differential offset (C2)
+let physMax    = 10;
+let ctrlRange  = 10;
+let ctrlOffset = 0;
 let simX = 0, simV = 0;
 let paused = false;
 
-function simStep(dt) {
-  stepOscillator(dt);
+function effLimits() {
+  return {
+    L: Math.max(-physMax, -ctrlRange + ctrlOffset),
+    R: Math.min( physMax,  ctrlRange + ctrlOffset)
+  };
+}
 
-  const leftLim  = Math.max(-physMax, -ctrlRange + ctrlOffset);
-  const rightLim = Math.min( physMax,  ctrlRange + ctrlOffset);
-
+function simStep0(dt) {
+  stepOsc(dt);
+  const { L, R } = effLimits();
   const fDrive = rawDrive * driveScale * 6.5;
   const fDamp  = -2.8 * simV;
-
-  // Soft electronic brake
   let fBrake = 0;
-  if (simX > rightLim) fBrake -= 28 * (simX - rightLim);
-  if (simX < leftLim)  fBrake -= 28 * (simX - leftLim);
-
-  // Deceleration zone near limits
-  const dL = simX - leftLim, dR = rightLim - simX, Z = 1.5;
+  if (simX > R) fBrake -= 28 * (simX - R);
+  if (simX < L) fBrake -= 28 * (simX - L);
+  const dL = simX - L, dR = R - simX, Z = 1.5;
   if (dL < Z && simV < 0) fBrake -= 4 * simV * (1 - Math.max(0, dL) / Z);
   if (dR < Z && simV > 0) fBrake -= 4 * simV * (1 - Math.max(0, dR) / Z);
-
   simV += (fDrive + fDamp + fBrake) * dt;
   simX += simV * dt;
-
   if (simX >  physMax) { simX =  physMax; simV = -Math.abs(simV) * 0.15; }
   if (simX < -physMax) { simX = -physMax; simV =  Math.abs(simV) * 0.15; }
 }
 
 // ═══════════════════════════════════════════════════════════
-// THREE.JS
+// WIGGLY CHAIN — Joints 1..N
+// Implements Kass & Anderson 2008: each joint is a damped
+// harmonic oscillator driven toward the preceding joint's
+// position. ω² sets the "wiggliness" (spring stiffness),
+// ζ sets damping (ζ<1 = underdamped / wiggly).
 // ═══════════════════════════════════════════════════════════
-const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('c3d'), antialias: true });
+let wigOmega  = 2.0;   // natural frequency ω
+let wigZeta   = 0.35;  // damping ratio ζ
+
+// joints[0] = { x: simX, v: simV } (alias, updated each frame)
+// joints[1..n] = additional wiggly joints
+const joints = [];  // [{x, v}]
+
+function addJoint() {
+  if (joints.length >= MAX_JOINTS) return;
+  joints.push({ x: getJointX(joints.length - 1), v: 0 });
+  updateJointUI();
+}
+function removeJoint() {
+  if (joints.length <= 1) return;
+  joints.pop();
+  updateJointUI();
+}
+
+function getJointX(i) {
+  if (i < 0) return simX;
+  return i === 0 ? simX : joints[i].x;
+}
+function getJointV(i) {
+  if (i < 0) return simV;
+  return i === 0 ? simV : joints[i].v;
+}
+
+function stepWigglyJoints(dt) {
+  for (let i = 1; i < joints.length; i++) {
+    const j     = joints[i];
+    const driverX = getJointX(i - 1);
+    // Wiggly spline spring: x'' = ω²(target - x) - 2ζω·x'
+    const spring = wigOmega * wigOmega * (driverX - j.x);
+    const damp   = -2 * wigZeta * wigOmega * j.v;
+    j.v += (spring + damp) * dt;
+    j.x += j.v * dt;
+    // Apply scaled limits (outer joints can have slightly smaller range)
+    const scale = Math.max(0.5, 1 - i * 0.05);
+    const { L, R } = effLimits();
+    const Li = L * scale, Ri = R * scale;
+    if (j.x > Math.min(physMax, Ri))  { j.x = Math.min(physMax, Ri);  j.v = Math.min(0, j.v) * 0.2; }
+    if (j.x < Math.max(-physMax, Li)) { j.x = Math.max(-physMax, Li); j.v = Math.max(0, j.v) * 0.2; }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// THREE.JS SCENE
+// ═══════════════════════════════════════════════════════════
+const c3d = document.getElementById('c3d');
+const renderer = new THREE.WebGLRenderer({ canvas: c3d, antialias: true });
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x050509);
 
+// ── Two cameras ───────────────────────────────────────────
 const FRUST = 22;
-const cam   = new THREE.OrthographicCamera(-FRUST, FRUST, FRUST, -FRUST, 0.01, 200);
-cam.position.set(0, 80, 0);
-cam.lookAt(0, 0, 0);
-cam.up.set(0, 0, -1);
+const orthoCam = new THREE.OrthographicCamera(-FRUST, FRUST, FRUST, -FRUST, 0.01, 500);
+orthoCam.position.set(0, 80, 0.001);
+orthoCam.lookAt(0, 0, 0);
+orthoCam.up.set(0, 0, -1);
 
-scene.add(new THREE.GridHelper(50, 25, 0x0e0e1e, 0x0b0b16));
+const perspCam = new THREE.PerspectiveCamera(55, 1, 0.1, 500);
+let camTheta = Math.PI * 0.3, camPhi = Math.PI * 0.28, camR = 32;
+const camTarget = new THREE.Vector3(0, 2, 0);
 
+function updatePerspCam() {
+  perspCam.position.set(
+    camTarget.x + camR * Math.sin(camPhi) * Math.sin(camTheta),
+    camTarget.y + camR * Math.cos(camPhi),
+    camTarget.z + camR * Math.sin(camPhi) * Math.cos(camTheta)
+  );
+  perspCam.lookAt(camTarget);
+}
+updatePerspCam();
+
+let viewIs3D = false;
+function activeCamera() { return viewIs3D ? perspCam : orthoCam; }
+
+// ── Drag to orbit (3D mode) ───────────────────────────────
+let drag = false, dragX = 0, dragY = 0;
+c3d.addEventListener('mousedown', e => { drag = true; dragX = e.clientX; dragY = e.clientY; });
+c3d.addEventListener('mouseup',   () => { drag = false; });
+c3d.addEventListener('mouseleave',() => { drag = false; });
+c3d.addEventListener('mousemove', e => {
+  if (!drag || !viewIs3D) return;
+  camTheta -= (e.clientX - dragX) * 0.012;
+  camPhi    = Math.max(0.08, Math.min(Math.PI * 0.48, camPhi - (e.clientY - dragY) * 0.012));
+  dragX = e.clientX; dragY = e.clientY;
+  updatePerspCam();
+});
+c3d.addEventListener('wheel', e => {
+  if (!viewIs3D) return;
+  camR = Math.max(10, Math.min(70, camR + e.deltaY * 0.06));
+  updatePerspCam();
+}, { passive: true });
+
+// ── Helpers ───────────────────────────────────────────────
 function dxz(deg, r) {
   const a = (deg - 90) * Math.PI / 180;
   return new THREE.Vector3(Math.cos(a) * r, 0, Math.sin(a) * r);
 }
+const ASTEPS = 64;
 
-const STEPS = 64;
+// ── Grid ──────────────────────────────────────────────────
+const gridTop  = new THREE.GridHelper(50, 25, 0x0e0e1e, 0x0b0b16);
+const grid3D   = new THREE.GridHelper(50, 25, 0x0e0e1e, 0x0b0b16);
+scene.add(gridTop);
+scene.add(grid3D);
 
-// ── Physical limit arc (dynamic — updates when physMax changes) ──
-const physArcBuf = new Float32Array((STEPS + 1) * 3);
+// ── Physical limit arc ────────────────────────────────────
+const physArcBuf = new Float32Array((ASTEPS + 1) * 3);
 const physArcGeo = new THREE.BufferGeometry();
 physArcGeo.setAttribute('position', new THREE.BufferAttribute(physArcBuf, 3));
-scene.add(new THREE.Line(physArcGeo, new THREE.LineBasicMaterial({ color: 0x882211 })));
-
+const physArcLine = new THREE.Line(physArcGeo, new THREE.LineBasicMaterial({ color: 0x882211 }));
+scene.add(physArcLine);
 const physLimBuf = new Float32Array(12);
 const physLimGeo = new THREE.BufferGeometry();
 physLimGeo.setAttribute('position', new THREE.BufferAttribute(physLimBuf, 3));
 scene.add(new THREE.LineSegments(physLimGeo, new THREE.LineBasicMaterial({ color: 0x663311 })));
 
 function updatePhysArc(limit) {
-  const R = limit / 10 * 15 + 2; // scale radius with limit
-  for (let i = 0; i <= STEPS; i++) {
-    const d = -limit + (limit * 2) * i / STEPS;
+  const R = Math.min(18, limit * 1.4 + 2);
+  for (let i = 0; i <= ASTEPS; i++) {
+    const d = -limit + limit * 2 * i / ASTEPS;
     const a = (d - 90) * Math.PI / 180;
-    physArcBuf[i*3+0] = Math.cos(a) * R;
-    physArcBuf[i*3+1] = 0.03;
-    physArcBuf[i*3+2] = Math.sin(a) * R;
+    physArcBuf[i*3+0] = Math.cos(a)*R; physArcBuf[i*3+1] = 0.03; physArcBuf[i*3+2] = Math.sin(a)*R;
   }
   physArcGeo.attributes.position.needsUpdate = true;
-
-  const R2 = R + 0.5;
-  const pl = dxz(-limit, R2), pr = dxz(limit, R2);
+  const R2 = R + 0.5, pl = dxz(-limit, R2), pr = dxz(limit, R2);
   physLimBuf[0]=0; physLimBuf[1]=0.03; physLimBuf[2]=0;
   physLimBuf[3]=pl.x; physLimBuf[4]=0.03; physLimBuf[5]=pl.z;
   physLimBuf[6]=0; physLimBuf[7]=0.03; physLimBuf[8]=0;
@@ -497,374 +524,443 @@ function updatePhysArc(limit) {
 }
 updatePhysArc(physMax);
 
-// ── Electronic limit arc (dynamic) ──
-const eArcBuf = new Float32Array((STEPS + 1) * 3);
+// ── Electronic limit arc ──────────────────────────────────
+const eArcBuf = new Float32Array((ASTEPS + 1) * 3);
 const eArcGeo = new THREE.BufferGeometry();
 eArcGeo.setAttribute('position', new THREE.BufferAttribute(eArcBuf, 3));
 scene.add(new THREE.Line(eArcGeo, new THREE.LineBasicMaterial({ color: 0xff6633 })));
-
 const eLimBuf = new Float32Array(12);
 const eLimGeo = new THREE.BufferGeometry();
 eLimGeo.setAttribute('position', new THREE.BufferAttribute(eLimBuf, 3));
 scene.add(new THREE.LineSegments(eLimGeo, new THREE.LineBasicMaterial({ color: 0xcc4422 })));
-
-// Range fill sector
-const SFAN = 40;
-const sfBuf = new Float32Array((SFAN + 2) * 3);
-const sfIdx = [];
+const SFAN = 40, sfBuf = new Float32Array((SFAN+2)*3), sfIdx = [];
 for (let i = 0; i < SFAN; i++) sfIdx.push(0, i+1, i+2);
 const sfGeo = new THREE.BufferGeometry();
 sfGeo.setAttribute('position', new THREE.BufferAttribute(sfBuf, 3));
 sfGeo.setIndex(sfIdx);
-scene.add(new THREE.Mesh(sfGeo,
-  new THREE.MeshBasicMaterial({ color: 0xff6633, transparent: true, opacity: 0.06, side: THREE.DoubleSide })));
+scene.add(new THREE.Mesh(sfGeo, new THREE.MeshBasicMaterial({ color: 0xff6633, transparent: true, opacity: 0.05, side: THREE.DoubleSide })));
 
-function updateElecLimits(left, right) {
-  const R = 12;
-  for (let i = 0; i <= STEPS; i++) {
-    const d = left + (right - left) * i / STEPS;
-    const a = (d - 90) * Math.PI / 180;
-    eArcBuf[i*3+0] = Math.cos(a)*R; eArcBuf[i*3+1] = 0.08; eArcBuf[i*3+2] = Math.sin(a)*R;
+function updateElecLimits(L, R) {
+  const AR = 12;
+  for (let i = 0; i <= ASTEPS; i++) {
+    const d = L + (R-L)*i/ASTEPS, a = (d-90)*Math.PI/180;
+    eArcBuf[i*3+0]=Math.cos(a)*AR; eArcBuf[i*3+1]=0.08; eArcBuf[i*3+2]=Math.sin(a)*AR;
   }
   eArcGeo.attributes.position.needsUpdate = true;
-
-  const pl = dxz(left, R), pr = dxz(right, R);
+  const pl=dxz(L,AR), pr=dxz(R,AR);
   eLimBuf[0]=0; eLimBuf[1]=0.08; eLimBuf[2]=0;
   eLimBuf[3]=pl.x; eLimBuf[4]=0.08; eLimBuf[5]=pl.z;
   eLimBuf[6]=0; eLimBuf[7]=0.08; eLimBuf[8]=0;
   eLimBuf[9]=pr.x; eLimBuf[10]=0.08; eLimBuf[11]=pr.z;
   eLimGeo.attributes.position.needsUpdate = true;
-
   sfBuf[0]=0; sfBuf[1]=0.05; sfBuf[2]=0;
-  for (let i = 0; i <= SFAN; i++) {
-    const d = left + (right - left) * i / SFAN;
-    const a = (d - 90) * Math.PI / 180;
-    const b = (i+1)*3;
-    sfBuf[b+0]=Math.cos(a)*R; sfBuf[b+1]=0.05; sfBuf[b+2]=Math.sin(a)*R;
+  for (let i=0; i<=SFAN; i++) {
+    const d=L+(R-L)*i/SFAN, a=(d-90)*Math.PI/180, b=(i+1)*3;
+    sfBuf[b+0]=Math.cos(a)*AR; sfBuf[b+1]=0.05; sfBuf[b+2]=Math.sin(a)*AR;
   }
   sfGeo.attributes.position.needsUpdate = true;
 }
 
-// ── Pivot ──
-scene.add(new THREE.Mesh(
+// ── Flat 2D arc objects (top-down only) ──────────────────
+const flatArcs  = [physArcLine, physArcGeo, eArcGeo, sfGeo, physLimGeo, eLimGeo];
+
+// ── Joint arm objects — one per joint slot ────────────────
+// Top-down: colored arms from pivot, shorter per joint
+// 3D: stacked discs + kinematic chain bones
+const JOINT_H     = 3.5; // vertical spacing in 3D
+const ARM_LEN     = 10;
+
+const jObjs = []; // Three.js objects per joint slot
+
+for (let i = 0; i < MAX_JOINTS; i++) {
+  const col   = JOINT_COLORS[i].three;
+  const group = new THREE.Group();
+
+  // ── Top-down arm ─────────────────────────────────────────
+  const armLen = ARM_LEN * (1 - i * 0.12);
+  const topArm = new THREE.Mesh(
+    new THREE.BoxGeometry(0.42, 0.18, armLen),
+    new THREE.MeshBasicMaterial({ color: col })
+  );
+  topArm.position.z = -armLen / 2;
+
+  const topDisc = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.6, 0.6, 0.2, 20),
+    new THREE.MeshBasicMaterial({ color: col })
+  );
+  topDisc.position.y = 0.1;
+
+  const topNose = new THREE.Mesh(
+    new THREE.ConeGeometry(0.3 + i * 0.03, 1.6, 8),
+    new THREE.MeshBasicMaterial({ color: new THREE.Color(col).multiplyScalar(1.6) })
+  );
+  topNose.rotation.x = Math.PI / 2;
+  topNose.position.z = -(armLen + 0.8);
+
+  group.add(topArm, topDisc, topNose);
+
+  // ── 3D disc + stub ────────────────────────────────────────
+  const disc3D = new THREE.Mesh(
+    new THREE.CylinderGeometry(1.2 - i * 0.08, 1.2 - i * 0.08, 0.35, 24),
+    new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.9 })
+  );
+  disc3D.position.y = i * JOINT_H;
+
+  const pointer3D = new THREE.Mesh(
+    new THREE.BoxGeometry(0.35, 0.25, 3.5),
+    new THREE.MeshBasicMaterial({ color: col })
+  );
+  pointer3D.position.z = -1.75;
+
+  const nose3D = new THREE.Mesh(
+    new THREE.ConeGeometry(0.28, 1.2, 8),
+    new THREE.MeshBasicMaterial({ color: new THREE.Color(col).multiplyScalar(1.5) })
+  );
+  nose3D.rotation.x = Math.PI / 2;
+  nose3D.position.z = -3.8;
+
+  // Connector to joint below (shown in 3D only)
+  let connector = null;
+  if (i > 0) {
+    connector = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.18, 0.18, JOINT_H, 10),
+      new THREE.MeshBasicMaterial({ color: 0x222244, transparent: true, opacity: 0.7 })
+    );
+    connector.position.y = i * JOINT_H - JOINT_H / 2;
+    scene.add(connector);
+  }
+
+  group.add(disc3D, pointer3D, nose3D);
+  scene.add(group);
+  jObjs.push({ group, topArm, topDisc, topNose, disc3D, pointer3D, nose3D, connector, active: false });
+}
+
+// Pivot marker (top-down)
+const pivotMesh = new THREE.Mesh(
   new THREE.CylinderGeometry(0.65, 0.65, 0.3, 24),
   new THREE.MeshBasicMaterial({ color: 0x223366 })
-));
-
-// ── Arm ──
-const armGroup = new THREE.Group();
-scene.add(armGroup);
-
-const armBody = new THREE.Mesh(
-  new THREE.BoxGeometry(0.5, 0.2, 10),
-  new THREE.MeshBasicMaterial({ color: 0x1e33a0 })
 );
-armBody.position.z = -5.5;
-armGroup.add(armBody);
+scene.add(pivotMesh);
 
-const headMesh = new THREE.Mesh(
-  new THREE.SphereGeometry(1.5, 20, 16),
-  new THREE.MeshBasicMaterial({ color: 0x2244dd })
-);
-headMesh.position.z = -11.5;
-armGroup.add(headMesh);
-
-const noseMesh = new THREE.Mesh(
-  new THREE.ConeGeometry(0.4, 2.2, 8),
-  new THREE.MeshBasicMaterial({ color: 0x6699ff })
-);
-noseMesh.rotation.x = Math.PI / 2;
-noseMesh.position.z = -13.5;
-armGroup.add(noseMesh);
-
+// ── Scene resize ──────────────────────────────────────────
 function resizeScene() {
   const el = document.getElementById('scene');
   const w = el.clientWidth, h = el.clientHeight;
   renderer.setSize(w, h, false);
   const a = w / h;
-  cam.left = -FRUST*a; cam.right = FRUST*a;
-  cam.top = FRUST; cam.bottom = -FRUST;
-  cam.updateProjectionMatrix();
+  orthoCam.left = -FRUST*a; orthoCam.right = FRUST*a;
+  orthoCam.top = FRUST; orthoCam.bottom = -FRUST;
+  orthoCam.updateProjectionMatrix();
+  perspCam.aspect = a;
+  perspCam.updateProjectionMatrix();
 }
 resizeScene();
+
+// ── Update joint visuals ──────────────────────────────────
+function updateJointVisuals() {
+  const count = joints.length; // includes J0
+
+  for (let i = 0; i < MAX_JOINTS; i++) {
+    const obj    = jObjs[i];
+    const active = i < count;
+    obj.active   = active;
+
+    const angle = active ? (i === 0 ? simX : joints[i].x) : 0;
+    const rad   = -angle * Math.PI / 180;
+
+    if (viewIs3D) {
+      // 3D mode: disc stacked at i*JOINT_H, rotating around Y
+      obj.group.position.set(0, i * JOINT_H, 0);
+      obj.group.rotation.y = rad;
+
+      // Show only 3D parts
+      obj.topArm.visible   = false;
+      obj.topNose.visible  = false;
+      obj.topDisc.visible  = false;
+      obj.disc3D.visible   = active;
+      obj.pointer3D.visible= active;
+      obj.nose3D.visible   = active;
+      if (obj.connector) obj.connector.visible = active && i > 0;
+
+      pivotMesh.visible = false;
+
+    } else {
+      // Top-down mode: all at origin, rotation only
+      obj.group.position.set(0, 0, 0);
+      obj.group.rotation.y = rad;
+
+      obj.topArm.visible   = active;
+      obj.topNose.visible  = active;
+      obj.topDisc.visible  = active && i === 0;
+      obj.disc3D.visible   = false;
+      obj.pointer3D.visible= false;
+      obj.nose3D.visible   = false;
+      if (obj.connector) obj.connector.visible = false;
+
+      pivotMesh.visible = true;
+    }
+  }
+
+  // Flat arcs: only top-down
+  const showFlat = !viewIs3D;
+  physArcLine.visible = showFlat;
+  eLimBuf; // arc lines controlled via materials
+  [physArcLine, ...scene.children.filter(c => c instanceof THREE.Line || c instanceof THREE.LineSegments)]
+    .forEach(c => { if (c !== physArcLine) return; c.visible = showFlat; });
+
+  // Grid: always show, but move for 3D
+  gridTop.visible = !viewIs3D;
+  grid3D.visible  = viewIs3D;
+
+  // Show/hide 2D arc objects explicitly
+  physArcLine.visible = showFlat;
+}
 
 // ═══════════════════════════════════════════════════════════
 // WAVEFORM PREVIEW
 // ═══════════════════════════════════════════════════════════
-const wvC   = document.getElementById('osc-wave');
+const wvC = document.getElementById('osc-wave');
 const wvCtx = wvC.getContext('2d');
-const WLEN  = 240;
-const wBuf  = new Float32Array(WLEN);
-let   wHead = 0;
-
+const WLEN = 240; const wBuf = new Float32Array(WLEN); let wHead = 0;
 function resizeWave() {
   const el = document.getElementById('wave-wrap');
   wvC.width  = Math.max(el.clientWidth - 2, 60);
   wvC.height = Math.max(el.clientHeight - 38, 40);
 }
 resizeWave();
-
-function pushWave() { wBuf[wHead] = rawDrive; wHead = (wHead + 1) % WLEN; }
-
+function pushWave() { wBuf[wHead] = rawDrive; wHead = (wHead+1)%WLEN; }
 function drawWave() {
-  const w = wvC.width, h = wvC.height, ctx = wvCtx;
-  if (!w || !h) return;
-
-  ctx.fillStyle = '#07071a'; ctx.fillRect(0, 0, w, h);
-
-  const peak = Math.max(oscAmp + oscNoise * 5 + 1, 1);
-  const yC = h / 2, yS = (h * 0.43) / peak;
-
-  // ±peak dashes
-  ctx.strokeStyle = '#1e1e4a'; ctx.lineWidth = 1; ctx.setLineDash([2,4]);
-  ctx.beginPath(); ctx.moveTo(0, yC - peak*yS); ctx.lineTo(w, yC - peak*yS); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(0, yC + peak*yS); ctx.lineTo(w, yC + peak*yS); ctx.stroke();
+  const w=wvC.width, h=wvC.height, ctx=wvCtx;
+  if (!w||!h) return;
+  ctx.fillStyle='#07071a'; ctx.fillRect(0,0,w,h);
+  const peak=Math.max(oscAmp+oscNoise*5+1,1), yC=h/2, yS=(h*0.43)/peak;
+  ctx.strokeStyle='#1e1e4a'; ctx.lineWidth=1; ctx.setLineDash([2,4]);
+  ctx.beginPath(); ctx.moveTo(0,yC-peak*yS); ctx.lineTo(w,yC-peak*yS); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0,yC+peak*yS); ctx.lineTo(w,yC+peak*yS); ctx.stroke();
   ctx.setLineDash([]);
-
-  // Zero
-  ctx.strokeStyle = '#181848'; ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(0, yC); ctx.lineTo(w, yC); ctx.stroke();
-
-  // Waveform
-  ctx.strokeStyle = '#ffbb44'; ctx.lineWidth = 2;
+  ctx.strokeStyle='#181848'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(0,yC); ctx.lineTo(w,yC); ctx.stroke();
+  ctx.strokeStyle='#ffbb44'; ctx.lineWidth=2;
   ctx.beginPath();
-  for (let i = 0; i < WLEN; i++) {
-    const v = wBuf[(wHead + i) % WLEN];
-    i === 0 ? ctx.moveTo(i/WLEN*w, yC - v*yS) : ctx.lineTo(i/WLEN*w, yC - v*yS);
+  for (let i=0;i<WLEN;i++) {
+    const v=wBuf[(wHead+i)%WLEN];
+    i===0?ctx.moveTo(i/WLEN*w,yC-v*yS):ctx.lineTo(i/WLEN*w,yC-v*yS);
   }
   ctx.stroke();
-
-  // Current dot
-  ctx.fillStyle = '#ffdd77';
-  ctx.beginPath(); ctx.arc(w-4, yC - wBuf[(wHead-1+WLEN)%WLEN]*yS, 4, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle='#ffdd77';
+  ctx.beginPath(); ctx.arc(w-4,yC-wBuf[(wHead-1+WLEN)%WLEN]*yS,4,0,Math.PI*2); ctx.fill();
 }
 
 // ═══════════════════════════════════════════════════════════
 // GRAPH DATA
 // ═══════════════════════════════════════════════════════════
-const GSECS = 12, GRATE = 60, GLEN = GSECS * GRATE;
-const gPos   = new Float32Array(GLEN);
-const gVel   = new Float32Array(GLEN);
-const gLeft  = new Float32Array(GLEN).fill(-physMax);
-const gRight = new Float32Array(GLEN).fill( physMax);
-const gDrv   = new Float32Array(GLEN);
-let   gHead  = 0, gSampleT = 0;
-const G_DT   = 1 / GRATE;
+const GSECS=12, GRATE=60, GLEN=GSECS*GRATE;
+// Store a history buffer per joint slot
+const gBufs = Array.from({length:MAX_JOINTS}, ()=>new Float32Array(GLEN));
+const gLeft=new Float32Array(GLEN).fill(-physMax);
+const gRight=new Float32Array(GLEN).fill(physMax);
+const gDrv=new Float32Array(GLEN);
+let gHead=0, gSampleT=0;
+const G_DT=1/GRATE;
 
-const PLEN = 600;
-const pPos = new Float32Array(PLEN);
-const pVel = new Float32Array(PLEN);
-let   pHead = 0;
+const PLEN=600;
+const pPos=new Float32Array(PLEN); const pVel=new Float32Array(PLEN); let pHead=0;
 
 function pushSample() {
-  const L = Math.max(-physMax, -ctrlRange + ctrlOffset);
-  const R = Math.min( physMax,  ctrlRange + ctrlOffset);
-  gPos[gHead]  = simX; gVel[gHead] = simV;
-  gLeft[gHead] = L;    gRight[gHead] = R;
-  gDrv[gHead]  = rawDrive * driveScale;
-  gHead = (gHead + 1) % GLEN;
-  pPos[pHead] = simX; pVel[pHead] = simV;
-  pHead = (pHead + 1) % PLEN;
+  const {L,R}=effLimits();
+  gLeft[gHead]=L; gRight[gHead]=R; gDrv[gHead]=rawDrive*driveScale;
+  gBufs[0][gHead]=simX;
+  for (let i=1;i<MAX_JOINTS;i++) gBufs[i][gHead]= i<joints.length ? joints[i].x : 0;
+  gHead=(gHead+1)%GLEN;
+  pPos[pHead]=simX; pVel[pHead]=simV; pHead=(pHead+1)%PLEN;
   pushWave();
 }
 
 // ═══════════════════════════════════════════════════════════
 // GRAPH DRAWING
 // ═══════════════════════════════════════════════════════════
-const gtC = document.getElementById('graph-time');
-const gpC = document.getElementById('graph-phase');
-const gtX = gtC.getContext('2d');
-const gpX = gpC.getContext('2d');
-
+const gtC=document.getElementById('graph-time');
+const gpC=document.getElementById('graph-phase');
+const gtX=gtC.getContext('2d'); const gpX=gpC.getContext('2d');
 function resizeGraphs() {
-  gtC.width  = Math.max(gtC.parentElement.clientWidth  - 28, 100);
-  gtC.height = Math.max(gtC.parentElement.clientHeight - 52, 60);
-  gpC.width  = Math.max(gpC.parentElement.clientWidth  - 28, 100);
-  gpC.height = Math.max(gpC.parentElement.clientHeight - 52, 60);
+  gtC.width=Math.max(gtC.parentElement.clientWidth-28,100);
+  gtC.height=Math.max(gtC.parentElement.clientHeight-52,60);
+  gpC.width=Math.max(gpC.parentElement.clientWidth-28,100);
+  gpC.height=Math.max(gpC.parentElement.clientHeight-52,60);
 }
 resizeGraphs();
 
 function drawTimeGraph() {
-  const w = gtC.width, h = gtC.height, ctx = gtX;
-  ctx.fillStyle = '#06060f'; ctx.fillRect(0, 0, w, h);
-
-  // Use physMax to set y scale dynamically
-  const VMAX = physMax * 1.15;
-  const yC = h / 2, yS = h / (VMAX * 2);
-
-  // Grid
-  ctx.strokeStyle = '#0e0e22'; ctx.lineWidth = 1;
-  const step = physMax <= 5 ? 1 : physMax <= 15 ? 5 : 10;
-  for (let d = -Math.ceil(VMAX); d <= Math.ceil(VMAX); d += step) {
-    const y = yC - d * yS;
-    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+  const w=gtC.width, h=gtC.height, ctx=gtX;
+  ctx.fillStyle='#06060f'; ctx.fillRect(0,0,w,h);
+  const VMAX=physMax*1.15, yC=h/2, yS=h/(VMAX*2);
+  const step=physMax<=5?1:physMax<=15?5:10;
+  ctx.strokeStyle='#0e0e22'; ctx.lineWidth=1;
+  for (let d=-Math.ceil(VMAX);d<=Math.ceil(VMAX);d+=step) {
+    const y=yC-d*yS; ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke();
   }
-  ctx.strokeStyle = '#1a1a38'; ctx.lineWidth = 1.5;
-  ctx.beginPath(); ctx.moveTo(0, yC); ctx.lineTo(w, yC); ctx.stroke();
+  ctx.strokeStyle='#1a1a38'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(0,yC); ctx.lineTo(w,yC); ctx.stroke();
+  ctx.fillStyle='#3a3a6a'; ctx.font='10px Courier New';
+  for (let d=-physMax;d<=physMax;d+=step) ctx.fillText(d+'°',3,yC-d*yS+4);
 
-  // Y labels
-  ctx.fillStyle = '#3a3a6a'; ctx.font = '10px Courier New';
-  for (let d = -physMax; d <= physMax; d += step)
-    ctx.fillText(d + '°', 3, yC - d * yS + 4);
-
-  function line(arr, color, lw, dash) {
-    ctx.strokeStyle = color; ctx.lineWidth = lw;
-    ctx.setLineDash(dash || []);
+  function line(arr,color,lw,dash) {
+    ctx.strokeStyle=color; ctx.lineWidth=lw; ctx.setLineDash(dash||[]);
     ctx.beginPath();
-    for (let i = 0; i < GLEN; i++) {
-      const x = i / GLEN * w, y = yC - arr[(gHead+i)%GLEN] * yS;
-      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    for (let i=0;i<GLEN;i++) {
+      const x=i/GLEN*w, y=yC-arr[(gHead+i)%GLEN]*yS;
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
     }
     ctx.stroke(); ctx.setLineDash([]);
   }
 
-  // Physical limit (faint dashed)
-  ctx.globalAlpha = 0.25;
-  const ph = new Float32Array(GLEN).fill( physMax);
-  const pn = new Float32Array(GLEN).fill(-physMax);
-  line(ph, '#cc3322', 1, [2,6]); line(pn, '#cc3322', 1, [2,6]);
-  ctx.globalAlpha = 1;
+  ctx.globalAlpha=0.2;
+  line(new Float32Array(GLEN).fill(physMax),'#cc3322',1,[2,6]);
+  line(new Float32Array(GLEN).fill(-physMax),'#cc3322',1,[2,6]);
+  ctx.globalAlpha=0.65;
+  line(gRight,'#ff7755',1.5,[5,4]); line(gLeft,'#ff7755',1.5,[5,4]);
+  ctx.globalAlpha=0.5;
+  const dsc=new Float32Array(GLEN); for(let i=0;i<GLEN;i++) dsc[i]=gDrv[i]/4;
+  line(dsc,'#ffbb44',1.5,null);
+  ctx.globalAlpha=1;
 
-  // Electronic limits
-  ctx.globalAlpha = 0.75;
-  line(gRight, '#ff7755', 1.5, [5,4]); line(gLeft, '#ff7755', 1.5, [5,4]);
-  ctx.globalAlpha = 1;
-
-  // Drive
-  ctx.globalAlpha = 0.55;
-  const dsc = new Float32Array(GLEN);
-  for (let i = 0; i < GLEN; i++) dsc[i] = gDrv[i] / 4;
-  line(dsc, '#ffbb44', 1.5, null);
-  ctx.globalAlpha = 1;
-
-  // Position
-  line(gPos, '#77aaff', 2.5, null);
-
-  // Current dot
-  ctx.fillStyle = '#aaccff';
-  const cy = yC - gPos[(gHead-1+GLEN)%GLEN] * yS;
-  ctx.beginPath(); ctx.arc(w-4, cy, 4, 0, Math.PI*2); ctx.fill();
+  // Draw active joints, J0 brightest
+  for (let ji=0; ji<joints.length; ji++) {
+    ctx.globalAlpha = ji===0 ? 1 : 0.75;
+    line(gBufs[ji], JOINT_COLORS[ji].hex, ji===0?2.5:1.5, null);
+    ctx.globalAlpha=1;
+    // Current dot
+    const cy=yC-gBufs[ji][(gHead-1+GLEN)%GLEN]*yS;
+    ctx.fillStyle=JOINT_COLORS[ji].hex;
+    ctx.beginPath(); ctx.arc(w-4-(ji*8),cy,ji===0?4:3,0,Math.PI*2); ctx.fill();
+  }
 }
 
 function drawPhaseGraph() {
-  const w = gpC.width, h = gpC.height, ctx = gpX;
-  ctx.fillStyle = '#06060f'; ctx.fillRect(0, 0, w, h);
-
-  const PR = physMax * 1.2, VR = Math.max(physMax * 4, 36);
-  const cx = w/2, cy = h/2, xS = w/(PR*2), yS = h/(VR*2);
-
-  ctx.strokeStyle = '#0e0e22'; ctx.lineWidth = 1;
-  const pStep = physMax <= 5 ? 2 : 5;
-  for (let d = -physMax; d <= physMax; d += pStep) {
-    ctx.beginPath(); ctx.moveTo(cx+d*xS, 0); ctx.lineTo(cx+d*xS, h); ctx.stroke();
-  }
-  const vStep = Math.ceil(VR/4);
-  for (let v = -VR; v <= VR; v += vStep) {
-    ctx.beginPath(); ctx.moveTo(0, cy-v*yS); ctx.lineTo(w, cy-v*yS); ctx.stroke();
-  }
-  ctx.strokeStyle = '#1a1a38'; ctx.lineWidth = 1.5;
+  const w=gpC.width, h=gpC.height, ctx=gpX;
+  ctx.fillStyle='#06060f'; ctx.fillRect(0,0,w,h);
+  const PR=physMax*1.2, VR=Math.max(physMax*4,36), cx=w/2, cy=h/2, xS=w/(PR*2), yS=h/(VR*2);
+  const pStep=physMax<=5?2:5;
+  ctx.strokeStyle='#0e0e22'; ctx.lineWidth=1;
+  for (let d=-physMax;d<=physMax;d+=pStep) { ctx.beginPath(); ctx.moveTo(cx+d*xS,0); ctx.lineTo(cx+d*xS,h); ctx.stroke(); }
+  const vStep=Math.ceil(VR/4);
+  for (let v=-VR;v<=VR;v+=vStep) { ctx.beginPath(); ctx.moveTo(0,cy-v*yS); ctx.lineTo(w,cy-v*yS); ctx.stroke(); }
+  ctx.strokeStyle='#1a1a38'; ctx.lineWidth=1.5;
   ctx.beginPath(); ctx.moveTo(cx,0); ctx.lineTo(cx,h); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(0,cy); ctx.lineTo(w,cy); ctx.stroke();
-
-  ctx.fillStyle = '#3a3a6a'; ctx.font = '10px Courier New';
-  ctx.fillText('pos→', w-34, cy-4); ctx.fillText('vel↑', cx+4, 11);
-
-  const SEG = 8;
-  for (let g = 0; g < PLEN/SEG; g++) {
-    const alpha = g / (PLEN/SEG);
-    ctx.globalAlpha = alpha * alpha * 0.88;
-    ctx.strokeStyle = `hsl(${260+alpha*60},60%,${28+alpha*38}%)`;
-    ctx.lineWidth = 1 + alpha*0.6;
+  ctx.fillStyle='#3a3a6a'; ctx.font='10px Courier New';
+  ctx.fillText('pos→',w-34,cy-4); ctx.fillText('vel↑',cx+4,11);
+  const SEG=8;
+  for (let g=0;g<PLEN/SEG;g++) {
+    const alpha=g/(PLEN/SEG);
+    ctx.globalAlpha=alpha*alpha*0.88;
+    ctx.strokeStyle=`hsl(${260+alpha*60},60%,${28+alpha*38}%)`; ctx.lineWidth=1+alpha*0.6;
     ctx.beginPath();
-    for (let i = 0; i <= SEG; i++) {
-      const idx = (pHead+g*SEG+i)%PLEN;
-      i===0
-        ? ctx.moveTo(cx+pPos[idx]*xS, cy-pVel[idx]*yS)
-        : ctx.lineTo(cx+pPos[idx]*xS, cy-pVel[idx]*yS);
+    for (let i=0;i<=SEG;i++) {
+      const idx=(pHead+g*SEG+i)%PLEN;
+      i===0?ctx.moveTo(cx+pPos[idx]*xS,cy-pVel[idx]*yS):ctx.lineTo(cx+pPos[idx]*xS,cy-pVel[idx]*yS);
     }
     ctx.stroke();
   }
-  ctx.globalAlpha = 1;
-
-  const ci = (pHead-1+PLEN)%PLEN;
-  ctx.fillStyle = '#ee44ee';
-  ctx.beginPath(); ctx.arc(cx+pPos[ci]*xS, cy-pVel[ci]*yS, 5, 0, Math.PI*2); ctx.fill();
+  ctx.globalAlpha=1;
+  const ci=(pHead-1+PLEN)%PLEN;
+  ctx.fillStyle='#ee44ee';
+  ctx.beginPath(); ctx.arc(cx+pPos[ci]*xS,cy-pVel[ci]*yS,5,0,Math.PI*2); ctx.fill();
 }
 
 // ═══════════════════════════════════════════════════════════
-// CONTROLS
+// JOINT UI
 // ═══════════════════════════════════════════════════════════
-function sl(id, fn) {
-  document.getElementById(id).addEventListener('input', function() { fn(parseFloat(this.value)); });
-}
-
-sl('o1f', v => { oscFreq    = v; document.getElementById('v-o1f').textContent = v.toFixed(2)+' Hz'; });
-sl('o1a', v => { oscAmp     = v; document.getElementById('v-o1a').textContent = v.toFixed(1)+'°'; });
-sl('odr', v => { driveScale = v/100; document.getElementById('v-odr').textContent = Math.round(v)+'%'; });
-sl('onz', v => { oscNoise   = v/100; document.getElementById('v-nz').textContent = Math.round(v)+'%'; });
-
-sl('ctrl-phys', v => {
-  physMax = v;
-  document.getElementById('val-phys').textContent = '±'+v.toFixed(1)+'°';
-  // Keep electronic range ≤ physMax
-  if (ctrlRange > physMax) {
-    ctrlRange = physMax;
-    const rs = document.getElementById('ctrl-range');
-    rs.value = physMax;
-    document.getElementById('val-range').textContent = '±'+physMax.toFixed(1)+'°';
+function updateJointUI() {
+  // Joint dot indicators
+  const container = document.getElementById('joint-dots');
+  container.innerHTML = '';
+  for (let i = 0; i < joints.length; i++) {
+    const d = document.createElement('div');
+    d.className = 'joint-dot';
+    d.style.background = JOINT_COLORS[i].hex;
+    d.title = `J${i}`;
+    container.appendChild(d);
   }
-  document.getElementById('ctrl-range').max = physMax;
+  document.getElementById('btn-add').disabled = joints.length >= MAX_JOINTS;
+  document.getElementById('btn-rem').disabled = joints.length <= 1;
+
+  // Graph legend
+  const leg = document.getElementById('gleg-time');
+  leg.innerHTML = '';
+  const labels = ['J0 (base)', 'J1', 'J2', 'J3', 'J4'];
+  ['Drive /4', ...labels.slice(0, joints.length)].forEach((label, i) => {
+    if (i === 0) {
+      leg.innerHTML += `<div class="leg"><div class="ll" style="background:#ffbb44;height:1.5px;opacity:.8"></div>${label}</div>`;
+    } else {
+      const ji = i - 1;
+      leg.innerHTML += `<div class="leg"><div class="ll" style="background:${JOINT_COLORS[ji].hex};height:${ji===0?'2.5':'1.5'}px"></div>${labels[ji]}</div>`;
+    }
+  });
+}
+
+// Initialize with joint 0
+joints.push({ x: 0, v: 0 }); // J0 placeholder (always uses simX/simV)
+updateJointUI();
+
+// ═══════════════════════════════════════════════════════════
+// SLIDER WIRING
+// ═══════════════════════════════════════════════════════════
+function sl(id, fn) { document.getElementById(id).addEventListener('input', function(){ fn(parseFloat(this.value)); }); }
+
+sl('o1f', v=>{ oscFreq=v; document.getElementById('v-o1f').textContent=v.toFixed(2)+' Hz'; });
+sl('o1a', v=>{ oscAmp=v;  document.getElementById('v-o1a').textContent=v.toFixed(1)+'°'; });
+sl('odr', v=>{ driveScale=v/100; document.getElementById('v-odr').textContent=Math.round(v)+'%'; });
+sl('onz', v=>{ oscNoise=v/100;   document.getElementById('v-nz').textContent=Math.round(v)+'%'; });
+sl('s-om',  v=>{ wigOmega=v; document.getElementById('v-om').textContent=v.toFixed(1); });
+sl('s-dmp', v=>{ wigZeta=v;  document.getElementById('v-dmp').textContent=v.toFixed(2); });
+
+sl('ctrl-phys', v=>{
+  physMax=v; document.getElementById('val-phys').textContent='±'+v.toFixed(1)+'°';
+  if (ctrlRange>physMax) { ctrlRange=physMax; document.getElementById('ctrl-range').value=physMax; document.getElementById('val-range').textContent='±'+physMax.toFixed(1)+'°'; }
+  document.getElementById('ctrl-range').max=physMax;
   updatePhysArc(physMax);
 });
+sl('ctrl-range', v=>{ ctrlRange=Math.min(v,physMax); document.getElementById('val-range').textContent='±'+ctrlRange.toFixed(1)+'°'; });
+sl('ctrl-off',   v=>{ ctrlOffset=v; document.getElementById('val-off').textContent=(v>=0?'+':'')+v.toFixed(1)+'°'; });
 
-sl('ctrl-range', v => {
-  ctrlRange = Math.min(v, physMax);
-  document.getElementById('val-range').textContent = '±'+ctrlRange.toFixed(1)+'°';
+document.getElementById('btn-noise').addEventListener('click', function(){
+  addNoise=!addNoise; this.textContent='Noise: '+(addNoise?'ON':'OFF'); this.classList.toggle('active',addNoise);
 });
-
-sl('ctrl-off', v => {
-  ctrlOffset = v;
-  document.getElementById('val-off').textContent = (v>=0?'+':'')+v.toFixed(1)+'°';
-  // keep offset range in sync with physMax
-  const maxOff = physMax * 0.8;
-  document.getElementById('ctrl-off').max =  maxOff;
-  document.getElementById('ctrl-off').min = -maxOff;
+document.getElementById('btn-pause').addEventListener('click', function(){
+  paused=!paused; this.textContent=paused?'Resume':'Pause'; this.classList.toggle('active',paused);
 });
-
-document.getElementById('btn-noise').addEventListener('click', function() {
-  addNoise = !addNoise;
-  this.textContent = 'Noise: '+(addNoise?'ON':'OFF');
-  this.classList.toggle('active', addNoise);
-});
-document.getElementById('btn-pause').addEventListener('click', function() {
-  paused = !paused;
-  this.textContent = paused ? 'Resume' : 'Pause';
-  this.classList.toggle('active', paused);
-});
-document.getElementById('btn-reset').addEventListener('click', () => {
+document.getElementById('btn-reset').addEventListener('click', ()=>{
   simX=0; simV=0; oscPh=0; noiseV=0; rawDrive=0;
-  gPos.fill(0); gVel.fill(0);
-  gLeft.fill(-physMax); gRight.fill(physMax);
-  gDrv.fill(0); gHead=0; gSampleT=0;
-  pPos.fill(0); pVel.fill(0); pHead=0;
-  wBuf.fill(0); wHead=0;
+  joints.forEach(j=>{ j.x=0; j.v=0; });
+  gBufs.forEach(b=>b.fill(0)); gLeft.fill(-physMax); gRight.fill(physMax); gDrv.fill(0);
+  gHead=0; gSampleT=0; pPos.fill(0); pVel.fill(0); pHead=0; wBuf.fill(0); wHead=0;
+});
+document.getElementById('btn-add').addEventListener('click', ()=>{ addJoint(); });
+document.getElementById('btn-rem').addEventListener('click', ()=>{ removeJoint(); });
+
+document.getElementById('btn-3d').addEventListener('click', function(){
+  viewIs3D=!viewIs3D;
+  this.textContent = viewIs3D ? '⊡ Top View' : '⟳ 3D View';
+  this.classList.toggle('active', viewIs3D);
+  document.getElementById('hl-view').textContent = viewIs3D ? '3D VIEW — drag to orbit' : 'TOP VIEW';
+  document.getElementById('hl-phys').style.display = viewIs3D ? 'none' : '';
+  document.getElementById('hl-elec').style.display = viewIs3D ? 'none' : '';
 });
 
 // ═══════════════════════════════════════════════════════════
 // READOUTS
 // ═══════════════════════════════════════════════════════════
-function fmt(v, d=2) { return (v>=0?'+':'')+v.toFixed(d); }
-
+function fmt(v,d=2){ return (v>=0?'+':'')+v.toFixed(d); }
 function updateReadouts() {
-  const L = Math.max(-physMax, -ctrlRange + ctrlOffset);
-  const R = Math.min( physMax,  ctrlRange + ctrlOffset);
+  const {L,R}=effLimits();
   document.getElementById('rd-pos').textContent   = fmt(simX)+'°';
   document.getElementById('rd-vel').textContent   = fmt(simV,1)+'°/s';
   document.getElementById('rd-left').textContent  = fmt(L)+'°';
   document.getElementById('rd-right').textContent = fmt(R)+'°';
   document.getElementById('rd-drv').textContent   = fmt(rawDrive*driveScale);
   document.getElementById('hl-now').textContent   = fmt(simX)+'°  '+fmt(simV,1)+'°/s';
-  document.getElementById('hl-phys').textContent  = 'Physical limit ±'+physMax.toFixed(1)+'°';
+  document.getElementById('hl-phys').textContent  = 'Physical ±'+physMax.toFixed(1)+'°';
   document.getElementById('ws-raw').textContent   = rawDrive.toFixed(2);
   document.getElementById('ws-eff').textContent   = (rawDrive*driveScale).toFixed(2);
 }
@@ -876,43 +972,34 @@ let lastT=performance.now(), frames=0, fpsT=performance.now();
 
 function animate() {
   requestAnimationFrame(animate);
-  const now = performance.now();
-  const dt  = Math.min((now-lastT)/1000, 0.05);
-  lastT = now;
-
-  frames++;
-  if (now-fpsT >= 1000) {
-    document.getElementById('fps').textContent = frames+' fps';
-    frames=0; fpsT=now;
-  }
+  const now=performance.now(), dt=Math.min((now-lastT)/1000,0.05); lastT=now;
+  frames++; if(now-fpsT>=1000){ document.getElementById('fps').textContent=frames+' fps'; frames=0; fpsT=now; }
 
   if (!paused) {
     const SUB=8, sub=dt/SUB;
-    for (let i=0; i<SUB; i++) simStep(sub);
-    gSampleT += dt;
-    while (gSampleT >= G_DT) { pushSample(); gSampleT -= G_DT; }
+    for (let i=0;i<SUB;i++) { simStep0(sub); stepWigglyJoints(sub); }
+    gSampleT+=dt;
+    while(gSampleT>=G_DT){ pushSample(); gSampleT-=G_DT; }
   }
 
-  const L = Math.max(-physMax, -ctrlRange + ctrlOffset);
-  const R = Math.min( physMax,  ctrlRange + ctrlOffset);
+  const {L,R}=effLimits();
+  updateElecLimits(L,R);
 
-  armGroup.rotation.y = -simX * Math.PI / 180;
+  // Arm color for J0: blue → red near limit
+  const dist=Math.min(simX-L,R-simX);
+  const brake=Math.max(0,1-dist/Math.max(1,(R-L)*0.1));
+  jObjs[0].topArm.material.color.lerpColors(new THREE.Color(0x2244cc),new THREE.Color(0x993322),brake);
+  jObjs[0].topDisc.material.color.lerpColors(new THREE.Color(0x2244cc),new THREE.Color(0x993322),brake);
 
-  // Arm color: blue → red near limits
-  const dist  = Math.min(simX - L, R - simX);
-  const brake = Math.max(0, 1 - dist / Math.max(1, (R-L)*0.1));
-  armBody.material.color.lerpColors(new THREE.Color(0x1e33a0), new THREE.Color(0x993322), brake);
-  headMesh.material.color.lerpColors(new THREE.Color(0x2244dd), new THREE.Color(0xaa3311), brake);
-
-  updateElecLimits(L, R);
+  updateJointVisuals();
   updateReadouts();
   drawTimeGraph();
   drawPhaseGraph();
   drawWave();
-  renderer.render(scene, cam);
+  renderer.render(scene, activeCamera());
 }
 
-window.addEventListener('resize', () => { resizeScene(); resizeGraphs(); resizeWave(); });
+window.addEventListener('resize', ()=>{ resizeScene(); resizeGraphs(); resizeWave(); });
 animate();
 </script>
 </body>
